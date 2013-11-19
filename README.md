@@ -62,13 +62,15 @@ So in this case the task resolution on `printy` will look for `errands.Printy`
 With a simple trait it's possible to gain access to your Play! application within your tasks which allows you to gain
 access to its plugins and configuration properties
 
+    import play.core.StaticApplication
+    
     trait PlayTask extends Runnable {
       val application = new StaticApplication(new java.io.File("."))
     }
 
     class PrintyTask extends PlayTask {
         def run() = {
-            val configSetting = ... // get some Play! configuration
+            val configSetting = application.configuration... // get some Play! configuration
             println(configSetting)
         }
     }
