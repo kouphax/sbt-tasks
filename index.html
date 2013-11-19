@@ -111,6 +111,24 @@ installTask("printy")
 <p>So in this case the task resolution on <code>printy</code> will look for <code>errands.Printy</code></p>
 
 <h2>
+<a name="play-2-integration" class="anchor" href="#play-2-integration"><span class="octicon octicon-link"></span></a>Play! 2 Integration</h2>
+
+<p>With a simple trait it's possible to gain access to your Play! application within your tasks which allows you to gain
+access to its plugins and configuration properties</p>
+
+<pre><code>trait PlayTask extends Runnable {
+  val application = new StaticApplication(new java.io.File("."))
+}
+
+class PrintyTask extends PlayTask {
+    def run() = {
+        val configSetting = ... // get some Play! configuration
+        println(configSetting)
+    }
+}
+</code></pre>
+
+<h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>The MIT License (MIT)</p>
