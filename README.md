@@ -14,7 +14,7 @@ Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/
 
     resolvers += "yobreifca.se repository" at "http://yobriefca.se/maven"
 
-    addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.1.2")
+    addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.2.0")
 
 > ** Version numbers may not be accurate **
 
@@ -37,6 +37,12 @@ Then in your `build.sbt` or `Build.scala` file (example shows `build.sbt`) impor
     ...
 
 This allows you to do `sbt printy` on the command line to run the associated `Printy` task.
+
+If you want to also add a bit of descriptive text for your task you can call `installTask` with an extra argument
+
+    ...
+    installTask("printy", "Prints a pointless message")
+    ...
 
 ### Wait so how does `sbt-tasks` know what task to run?
 
@@ -63,7 +69,7 @@ With a simple trait it's possible to gain access to your Play! application withi
 access to its plugins and configuration properties
 
     import play.core.StaticApplication
-    
+
     trait PlayTask extends Runnable {
       val application = new StaticApplication(new java.io.File("."))
     }
@@ -74,6 +80,11 @@ access to its plugins and configuration properties
             println(configSetting)
         }
     }
+
+## Changes
+
+    sbt-task 0.2.0 (19 Nov 2013)
+    - Added description argument to installTask task
 
 ## License
 

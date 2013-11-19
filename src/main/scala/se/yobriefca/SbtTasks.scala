@@ -13,8 +13,8 @@ object SbtTasks extends Plugin {
     defaultTaskPackage := "tasks"
   )
 
-  def installTask(taskName: String) = {
-    TaskKey[Unit](taskName) <<= taskRunner(taskName.capitalize) map (_.run)
+  def installTask(taskName: String, taskDescription: String = "") = {
+    TaskKey[Unit](taskName, taskDescription) <<= taskRunner(taskName.capitalize) map (_.run)
   }
 
   private def taskRunner(taskClassName: String) = {

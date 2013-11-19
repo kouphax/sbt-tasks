@@ -4,7 +4,7 @@ name := "sbt-tasks"
 
 organization := "se.yobriefca"
 
-version := "0.1.2"
+version := "0.2.0"
 
 sbtVersion := "0.13.0"
 
