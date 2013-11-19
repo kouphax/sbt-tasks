@@ -58,7 +58,7 @@ migrations and other things that are project specific.</p>
 
 <pre><code>resolvers += "yobreifca.se repository" at "http://yobriefca.se/maven"
 
-addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.1.2")
+addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.2.0")
 </code></pre>
 
 <blockquote>
@@ -87,6 +87,13 @@ installTask("printy")
 </code></pre>
 
 <p>This allows you to do <code>sbt printy</code> on the command line to run the associated <code>Printy</code> task.</p>
+
+<p>If you want to also add a bit of descriptive text for your task you can call <code>installTask</code> with an extra argument</p>
+
+<pre><code>...
+installTask("printy", "Prints a pointless message")
+...
+</code></pre>
 
 <h3>
 <a name="wait-so-how-does-sbt-tasks-know-what-task-to-run" class="anchor" href="#wait-so-how-does-sbt-tasks-know-what-task-to-run"><span class="octicon octicon-link"></span></a>Wait so how does <code>sbt-tasks</code> know what task to run?</h3>
@@ -128,6 +135,13 @@ class PrintyTask extends PlayTask {
         println(configSetting)
     }
 }
+</code></pre>
+
+<h2>
+<a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h2>
+
+<pre><code>sbt-task 0.2.0 (19 Nov 2013)
+- Added description argument to installTask task
 </code></pre>
 
 <h2>
