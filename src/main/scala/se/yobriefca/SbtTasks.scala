@@ -3,6 +3,7 @@ package se.yobriefca
 import sbt._
 import Keys._
 import scala.util.Try
+import java.net.URLClassLoader
 
 object SbtTasks extends Plugin {
 
@@ -12,29 +13,28 @@ object SbtTasks extends Plugin {
     defaultTaskPackage := "tasks"
   )
 
-  def taskRunner(taskClassname: String) = {
-    (dependencyClasspath in Runtime, defaultTaskPackage) map { (deps, taskPackage) =>
-
-      val depURLs     = deps.map(_.data.toURI.toURL).toArray
-      val classLoader = new java.net.URLClassLoader(depURLs, null)
-      val taskClass   = s"$taskPackage.$taskClassname"
-      val task        = tryLoadTask(taskClass, classLoader) recover {
-        case cnfe: ClassNotFoundException =>
-          buildTaskNotFoundTask(taskClass)
-      }
-
-      task.get
-    }
-  }
-
   def installTask(taskName: String) = {
-    TaskKey[Unit](taskName) <<= taskRunner(taskName.capitalize) map { _.run() }
+    TaskKey[Unit](taskName) <<= taskRunner(taskName.capitalize) map (_.run)
   }
 
-  private def buildTaskNotFoundTask(taskClassname: String) = new Runnable {
-    def run() {
-      println(s"Unable to find task $taskClassname")
+  private def taskRunner(taskClassName: String) = {
+    (dependencyClasspath in Runtime, defaultTaskPackage) map
+      (loadTaskSafe(_, _, taskClassName))
+  }
+
+  private def loadTaskSafe(dependencies: Keys.Classpath, taskPackage:String, className: String) = {
+    val dependenciesUrls = dependencies.map(_.data.toURI.toURL).toArray
+    val classLoader = new URLClassLoader(dependenciesUrls, null)
+    val taskClass = s"$taskPackage.$className"
+    val task = tryLoadTask(taskClass, classLoader) recover {
+      case cnfe:ClassNotFoundException => taskNotFoundTask(taskClass)
     }
+
+    task.get
+  }
+
+  private def taskNotFoundTask(taskClassname: String) = new Runnable {
+    def run() = println(s"Unable to find task $taskClassname")
   }
 
   private def tryLoadTask(taskClass: String, classLoader: ClassLoader) =
