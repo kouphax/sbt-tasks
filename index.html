@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>sbt-tasks by kouphax</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/kouphax/sbt-tasks">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/kouphax/sbt-tasks/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/kouphax/sbt-tasks/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>sbt-tasks</h1>
+          <p>sbt plugin akin to the rails/rake custom tasks</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/kouphax">kouphax</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p><code>sbt-tasks</code> is an <code>sbt</code> plugin that gives <code>sbt</code> project Rails/Rake like functionality to execute tasks directly in <code>sbt</code> with the full
+classpath and dependencies loaded.  This means you can do awesome things like seed and reset databases, perform
+migrations and other things that are project specific.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>
+<a href="http://www.scala-sbt.org/">sbt</a> 0.13</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/plugins.sbt</p>
+
+<pre><code>resolvers += "yobreifca.se repository" at "http://yobriefca.se/maven"
+
+addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.1.2")
+</code></pre>
+
+<blockquote>
+<p>** Version numbers may not be accurate **</p>
+</blockquote>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>First of all create a <code>Task</code> in the <code>tasks</code> package (this is the default place and can be configured... see later).
+A <code>Task</code> is simply a class that implements <code>Runnable</code> e.g.</p>
+
+<pre><code>package tasks
+
+class Printy extends Runnable {
+    def run = println("Useless Printy Task")
+}
+</code></pre>
+
+<p>Then in your <code>build.sbt</code> or <code>Build.scala</code> file (example shows <code>build.sbt</code>) import the plugin and <code>install</code> some tasks</p>
+
+<pre><code>import se.yobriefca.SbtTasks._
+...
+installTask("printy")
+...
+</code></pre>
+
+<p>This allows you to do <code>sbt printy</code> on the command line to run the associated <code>Printy</code> task.</p>
+
+<h3>
+<a name="wait-so-how-does-sbt-tasks-know-what-task-to-run" class="anchor" href="#wait-so-how-does-sbt-tasks-know-what-task-to-run"><span class="octicon octicon-link"></span></a>Wait so how does <code>sbt-tasks</code> know what task to run?</h3>
+
+<p>Good question.  It uses the defined package name (defaulting to <code>tasks</code>) and the convention of
+<code>taskname.captialize</code> - so <code>printy</code> will call <code>tasks.Printy</code>.</p>
+
+<h2>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>There is very little configuration involved in <code>sbt-tasks</code> but you can currently modify the default package that <code>sbt-tasks</code>
+will look for <code>Tasks</code> in.  We can extend our example <code>build.sbt</code> to achieve this</p>
+
+<pre><code>import se.yobriefca.SbtTasks._
+...
+defaultTaskPackage := "errands"
+...
+installTask("printy")
+...
+</code></pre>
+
+<p>So in this case the task resolution on <code>printy</code> will look for <code>errands.Printy</code></p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2013 James Hughes (<a href="mailto:james@yobriefca.se">james@yobriefca.se</a>)</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-19143623-18");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
