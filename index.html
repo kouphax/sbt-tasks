@@ -4,40 +4,30 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>sbt-tasks by kouphax</title>
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/kouphax/sbt-tasks">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/kouphax/sbt-tasks/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/kouphax/sbt-tasks/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
     <div class="wrapper">
+      <header>
+        <h1>sbt-tasks</h1>
+        <p>sbt plugin akin to the rails/rake custom tasks</p>
 
+        <p class="view"><a href="https://github.com/kouphax/sbt-tasks">View the Project on GitHub <small>kouphax/sbt-tasks</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kouphax/sbt-tasks/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kouphax/sbt-tasks/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kouphax/sbt-tasks">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
       <section>
-        <div id="title">
-          <h1>sbt-tasks</h1>
-          <p>sbt plugin akin to the rails/rake custom tasks</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/kouphax">kouphax</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
-
         <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
@@ -68,8 +58,14 @@ addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.2.0")
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<p>First of all create a <code>Task</code> in the <code>tasks</code> package (this is the default place and can be configured... see later).
-A <code>Task</code> is simply a class that implements <code>Runnable</code> e.g.</p>
+<p>There are 2 ways to create tasks - with and without args.  There isn't yet a simple one size fits all appraoch yet (this needs further design).</p>
+
+<h3>
+<a name="tasks-without-args" class="anchor" href="#tasks-without-args"><span class="octicon octicon-link"></span></a>Tasks (without args)</h3>
+
+<p>First of all create a <code>Task</code> in the <code>tasks</code> package (this is the default place and can be configured... see later).</p>
+
+<p>A <code>Task</code> is simply a class that implements <code>Runnable</code> e.g.</p>
 
 <pre><code>package tasks
 
@@ -94,6 +90,41 @@ installTask("printy")
 installTask("printy", "Prints a pointless message")
 ...
 </code></pre>
+
+<h3>
+<a name="tasks-expecting-arguments" class="anchor" href="#tasks-expecting-arguments"><span class="octicon octicon-link"></span></a>Tasks (expecting arguments)</h3>
+
+<p>The only differences between tasks without args and ones with are that they are,</p>
+
+<ol>
+<li>Installed different <code>installTaskWithArgs(&lt;same_parameters_as_before&gt;)</code>
+</li>
+<li>Expect an <code>Array[String]</code> in their constructor</li>
+</ol><p>We can extend the <code>printy</code> task above to take arguments</p>
+
+<pre><code>package tasks
+
+class Printy(args: Array[String]) extends Runnable {
+    def run = args.foreach(println)
+}
+</code></pre>
+
+<p>Then install it like so,</p>
+
+<pre><code> installTaskWithArgs("printy", "Prints a pointless message")
+</code></pre>
+
+<p>Then in SBT we can call it like so,</p>
+
+<pre><code>&gt; printy arg1 arg2 arg3
+[run-task] printy
+arg1 
+arg2 
+arg3
+[success] Total time: 0 s, completed ...
+</code></pre>
+
+<p>The whole thing tries to be as helpful as possible when you try and install a task expecting args with <code>installTask</code> or a task not expecting args with <code>installTaskWithArgs</code>.  <strong>This needs careful review as it affects clobbing of arguments between the two commands and may be refactored later</strong></p>
 
 <h3>
 <a name="wait-so-how-does-sbt-tasks-know-what-task-to-run" class="anchor" href="#wait-so-how-does-sbt-tasks-know-what-task-to-run"><span class="octicon octicon-link"></span></a>Wait so how does <code>sbt-tasks</code> know what task to run?</h3>
@@ -142,6 +173,10 @@ class PrintyTask extends PlayTask {
 
 <pre><code>sbt-task 0.2.0 (19 Nov 2013)
 - Added description argument to installTask task
+
+sbt-task 0.3.16 (26 Nov 2013)
+- Added tasks that accept arguments (installTaskWithArgs)
+- Added logging for displaying name of running task
 </code></pre>
 
 <h2>
@@ -169,9 +204,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.</p>
       </section>
-
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kouphax">kouphax</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    <script src="javascripts/scale.fix.js"></script>
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
