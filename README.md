@@ -20,7 +20,12 @@ Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/
 
 ## Usage
 
+There are 2 ways to create tasks - with and without args.  There isn't yet a simple one size fits all appraoch yet (this needs further design).
+
+### Tasks (without args)
+
 First of all create a `Task` in the `tasks` package (this is the default place and can be configured... see later).
+
 A `Task` is simply a class that implements `Runnable` e.g.
 
     package tasks
@@ -43,6 +48,36 @@ If you want to also add a bit of descriptive text for your task you can call `in
     ...
     installTask("printy", "Prints a pointless message")
     ...
+
+### Tasks (expecting arguments)
+
+The only differences between tasks without args and ones with are that they are,
+
+1. Installed different `installTaskWithArgs(<same_parameters_as_before>)`
+2. Expect an `Array[String]` in their constructor
+
+We can extend the `printy` task above to take arguments
+
+    package tasks
+
+    class Printy(args: Array[String]) extends Runnable {
+        def run = args.foreach(println)
+    }
+
+Then install it like so,
+
+     installTaskWithArgs("printy", "Prints a pointless message")
+ 
+ Then in SBT we can call it like so,
+ 
+    > printy arg1 arg2 arg3
+    [run-task] printy
+    arg1 
+    arg2 
+    arg3
+    [success] Total time: 0 s, completed ...
+    
+The whole thing tries to be as helpful as possible when you try and install a task expecting args with `installTask` or a task not expecting args with `installTaskWithArgs`.  __This needs careful review as it affects clobbing of arguments between the two commands and may be refactored later__
 
 ### Wait so how does `sbt-tasks` know what task to run?
 
@@ -85,6 +120,10 @@ access to its plugins and configuration properties
 
     sbt-task 0.2.0 (19 Nov 2013)
     - Added description argument to installTask task
+
+    sbt-task 0.3.16 (26 Nov 2013)
+    - Added tasks that accept arguments (installTaskWithArgs)
+    - Added logging for displaying name of running task
 
 ## License
 
