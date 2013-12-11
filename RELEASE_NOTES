@@ -1,0 +1,6 @@
+sbt-task 0.2.0 (19 Nov 2013)
+- Added description argument to installTask task
+
+sbt-task 0.3.16 (26 Nov 2013)
+- Added tasks that accept arguments (installTaskWithArgs)
+- Added logging for displaying name of running task
