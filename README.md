@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/kouphax/sbt-tasks.png?label=ready)](https://waffle.io/kouphax/sbt-tasks)  
 ## Introduction
 
 `sbt-tasks` is an `sbt` plugin that gives `sbt` project Rails/Rake like functionality to execute tasks directly in `sbt` with the full
