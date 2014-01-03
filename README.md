@@ -15,7 +15,7 @@ Add the following lines to ~/.sbt/0.13/plugins/build.sbt or PROJECT_DIR/project/
 
     resolvers += "yobreifca.se repository" at "http://yobriefca.se/maven"
 
-    addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.3.6")
+    addSbtPlugin("se.yobriefca" % "sbt-tasks" % "0.3.16")
 
 > ** Version numbers may not be accurate **
 
